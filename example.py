@@ -1,8 +1,7 @@
-import six
 from pylibmodbus import ModbusTcp
 
 # Example
-mb = ModbusTcp(six.b("127.0.0.1"), 1502)
+mb = ModbusTcp("127.0.0.1", 1502)
 mb.connect()
 nb = 5
 
