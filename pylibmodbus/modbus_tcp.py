@@ -19,9 +19,7 @@ ffi.cdef("""
     int modbus_write_bits(modbus_t *ctx, int addr, int nb, const uint8_t *data);
     int modbus_write_registers(modbus_t *ctx, int addr, int nb, const uint16_t *data);
 """)
-C = ffi.verify("""
-#include <modbus.h>
-""", libraries=['modbus'], include_dirs=['/usr/local/include/modbus'])
+C = ffi.dlopen('modbus')
 
 
 class ModbusException(Exception):
