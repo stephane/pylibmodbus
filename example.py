@@ -25,9 +25,9 @@ for i, v in enumerate(data):
 
 UT_REAL = 916.540649
 data = [0x229a, 0x4465]
-print "%f == %f" % (mb.get_float(data), UT_REAL)
+print("%f == %f" % (mb.get_float(data), UT_REAL))
 
 mb.set_float(UT_REAL, data)
-print "%f == %f" % (mb.get_float(data), UT_REAL)
+print("%f == %f" % (mb.get_float(data), UT_REAL))
 
 mb.close()
