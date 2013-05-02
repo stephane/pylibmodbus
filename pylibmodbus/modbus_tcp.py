@@ -1,4 +1,4 @@
-from modbus_core import C, ModbusCore
+from .modbus_core import C, ModbusCore
 
 
 class ModbusTcp(ModbusCore):
