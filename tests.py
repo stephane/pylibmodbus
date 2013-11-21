@@ -8,13 +8,13 @@ test suite.
 """
 
 import unittest
-from pylibmodbus import ModbusTcp
+import pylibmodbus
 
 
 class ModbusTcpTest(unittest.TestCase):
 
     def setUp(self):
-        self.mb = ModbusTcp("127.0.0.1", 1502)
+        self.mb = pylibmodbus.ModbusTcp("127.0.0.1", 1502)
         self.mb.connect()
 
     def tearDown(self):
@@ -42,20 +42,29 @@ class ModbusTcpTest(unittest.TestCase):
 
 class ModbusDataTest(unittest.TestCase):
 
-    def setUp(self):
-        self.mb = ModbusTcp("127.0.0.1", 1502)
-
     def test_set_get_float(self):
         UT_REAL = 916.540649
         data = [0x229a, 0x4465]
-        self.assertAlmostEqual(self.mb.get_float(data), UT_REAL, places=6)
+        self.assertAlmostEqual(pylibmodbus.get_float(data), UT_REAL, places=6)
 
-        self.mb.set_float(UT_REAL, data)
-        self.assertAlmostEqual(self.mb.get_float(data), UT_REAL, places=6)
+        pylibmodbus.set_float(UT_REAL, data)
+        self.assertAlmostEqual(pylibmodbus.get_float(data), UT_REAL, places=6)
 
     def test_cast_signed_integers(self):
-        value = self.mb.cast_to_int16(65535)
-        self.assertEqual(value, -1)
+        MAX_UINT16 = 65535
+        MAX_UINT32 = 4294967295
+
+        # 0 to 32767 -32768 to - 1
+        self.assertEqual(pylibmodbus.cast_to_int16(0), 0)
+        self.assertEqual(pylibmodbus.cast_to_int16(MAX_UINT16), -1)
+        self.assertEqual(pylibmodbus.cast_to_int16(MAX_UINT16 / 2), 32767)
+        self.assertEqual(pylibmodbus.cast_to_int16((MAX_UINT16 / 2) + 1), -32768)
+
+        # Idem for 32 bits
+        self.assertEqual(pylibmodbus.cast_to_int32(0), 0)
+        self.assertEqual(pylibmodbus.cast_to_int32(MAX_UINT32), -1)
+        self.assertEqual(pylibmodbus.cast_to_int32(MAX_UINT32 / 2), MAX_UINT32 / 2)
+        self.assertEqual(pylibmodbus.cast_to_int32((MAX_UINT32 / 2) + 1), -((MAX_UINT32 / 2) + 1))
 
 
 if __name__ == '__main__':

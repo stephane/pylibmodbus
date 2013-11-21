@@ -28,6 +28,19 @@ ffi.cdef("""
 C = ffi.dlopen('modbus')
 
 
+def get_float(data):
+    return C.modbus_get_float(data)
+
+def set_float(value, data):
+    C.modbus_set_float(value, data)
+
+def cast_to_int16(data):
+    return int(ffi.cast('int16_t', data))
+
+def cast_to_int32(data):
+    return int(ffi.cast('int32_t', data))
+
+
 class ModbusException(Exception):
     pass
 
@@ -80,15 +93,3 @@ class ModbusCore(object):
     def write_registers(self, addr, data):
         nb = len(data)
         self._run(C.modbus_write_registers, addr, nb, data)
-
-    def get_float(self, data):
-        return C.modbus_get_float(data)
-
-    def set_float(self, value, data):
-        C.modbus_set_float(value, data)
-
-    def cast_to_int16(self, data):
-        return int(ffi.cast('int16_t', data))
-
-    def cast_to_int32(self, data):
-        return int(ffi.cast('int32_t', data))
