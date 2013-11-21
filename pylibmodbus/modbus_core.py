@@ -83,3 +83,9 @@ class ModbusCore(object):
 
     def set_float(self, value, data):
         C.modbus_set_float(value, data)
+
+    def cast_to_int16(self, data):
+        return int(ffi.cast('int16_t', data))
+
+    def cast_to_int32(self, data):
+        return int(ffi.cast('int32_t', data))
