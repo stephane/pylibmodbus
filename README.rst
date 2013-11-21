@@ -9,3 +9,5 @@ Required packages:
 
 - python-dev and libffi-dev
 - libmodbus and libmodbus-dev
+
+Licensed under BSD 3-Clause (see LICENSE file for details).
