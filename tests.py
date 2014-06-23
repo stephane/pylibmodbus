@@ -6,6 +6,7 @@
 Launch the tests/bandwidth-server-many-up of libmodbus before running the
 test suite.
 """
+from __future__ import division
 
 import unittest
 import pylibmodbus
@@ -63,8 +64,8 @@ class ModbusDataTest(unittest.TestCase):
         # Idem for 32 bits
         self.assertEqual(pylibmodbus.cast_to_int32(0), 0)
         self.assertEqual(pylibmodbus.cast_to_int32(MAX_UINT32), -1)
-        self.assertEqual(pylibmodbus.cast_to_int32(MAX_UINT32 / 2), MAX_UINT32 / 2)
-        self.assertEqual(pylibmodbus.cast_to_int32((MAX_UINT32 / 2) + 1), -((MAX_UINT32 / 2) + 1))
+        self.assertEqual(pylibmodbus.cast_to_int32(MAX_UINT32 / 2), MAX_UINT32 // 2)
+        self.assertEqual(pylibmodbus.cast_to_int32((MAX_UINT32 / 2) + 1), -((MAX_UINT32 // 2) + 1))
 
 
 if __name__ == '__main__':
