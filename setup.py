@@ -5,17 +5,22 @@ try:
 except ImportError:
     from distutils.core import setup
 
+import codecs
+
 __version__ = '0.0.2'
 
 packages = [
     'pylibmodbus',
 ]
 
+def file_content(filename):
+    return codecs.open(filename, 'r', 'utf-8').read()
+
 setup(
     name='pylibmodbus',
     version=__version__,
     description="Python wrapper for libmodbus",
-    long_description=open('README.rst').read(),
+    long_description=file_content('README.rst'),
     author="Stéphane Raimbault",
     author_email="stephane.raimbault@gmail.com",
     url="http://libmodbus.org",
@@ -24,7 +29,7 @@ setup(
     package_data={'': ['LICENSE']},
     include_package_data=True,
     install_requires=['cffi>=0.6'],
-    license=open('LICENSE').read(),
+    license=file_content('LICENSE'),
     zip_safe=False,
     classifiers=(
         'Development Status :: 5 - Production/Stable',
