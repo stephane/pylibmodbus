@@ -8,6 +8,7 @@ ffi.cdef("""
     typedef struct _modbus modbus_t;
 
     int modbus_connect(modbus_t *ctx);
+    int modbus_set_slave(modbus_t *ctx, int slave);
     void modbus_close(modbus_t *ctx);
     const char *modbus_strerror(int errnum);
 
@@ -53,6 +54,9 @@ class ModbusCore(object):
 
     def connect(self):
         return self._run(C.modbus_connect)
+
+    def set_slave(self, slave):
+        return self._run(C.modbus_set_slave, slave)
 
     def close(self):
         C.modbus_close(self.ctx)
