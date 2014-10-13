@@ -6,8 +6,15 @@ from cffi import FFI
 ffi = FFI()
 ffi.cdef("""
     typedef struct _modbus modbus_t;
+    struct timeval {
+        long int tv_sec;
+        long int tv_usec;
+    };
 
     int modbus_connect(modbus_t *ctx);
+    int modbus_set_slave(modbus_t *ctx, int slave);
+    void modbus_get_response_timeout(modbus_t *ctx, struct timeval *timeout);
+    void modbus_set_response_timeout(modbus_t *ctx, struct timeval *timeout);
     void modbus_close(modbus_t *ctx);
     const char *modbus_strerror(int errnum);
 
@@ -53,6 +60,22 @@ class ModbusCore(object):
 
     def connect(self):
         return self._run(C.modbus_connect)
+
+    def set_slave(self, slave):
+        return self._run(C.modbus_set_slave, slave)
+
+    def get_response_timeout(self):
+        response_timeout = ffi.new('struct timeval *')
+        self._run(C.modbus_get_response_timeout, response_timeout)
+        timeval = {}
+        timeval['tv_sec'] = response_timeout.tv_sec
+        timeval['tv_usec'] = response_timeout.tv_usec
+        return timeval
+
+    def set_response_timeout(self, sec, usec):
+        timeval = {'tv_sec': sec, 'tv_usec': usec}
+        response_timeout = ffi.new('struct timeval *', timeval)
+        self._run(C.modbus_set_response_timeout, response_timeout)
 
     def close(self):
         C.modbus_close(self.ctx)
