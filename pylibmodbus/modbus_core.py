@@ -64,10 +64,11 @@ class ModbusCore(object):
     def set_slave(self, slave):
         return self._run(C.modbus_set_slave, slave)
 
-    def get_response_timeout(self):
+    def get_response_timeout(self, timeval):
         response_timeout = ffi.new('struct timeval *')
         self._run(C.modbus_get_response_timeout, response_timeout)
-        return response_timeout
+        timeval['tv_sec'] = response_timeout.tv_sec
+        timeval['tv_usec'] = response_timeout.tv_usec
 
     def set_response_timeout(self, timeval):
         response_timeout = ffi.new('struct timeval *', timeval)
