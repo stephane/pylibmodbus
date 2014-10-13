@@ -18,8 +18,18 @@ class ModbusTcpTest(unittest.TestCase):
         self.mb = pylibmodbus.ModbusTcp("127.0.0.1", 1502)
         self.mb.connect()
 
+    def setSlave(self):
+        self.mb.set_slave(1)
+
     def tearDown(self):
         self.mb.close()
+
+    def test_get_set_timeout(self):
+        old_response_timeout = {'tv_sec': None, 'tv_usec': None}
+        response_timeout = {'tv_sec': 10, 'tv_usec': 0}
+
+        self.mb.get_response_timeout(old_response_timeout)
+        self.mb.set_response_timeout(response_timeout)
 
     def test_read_and_write(self):
         nb = 5
