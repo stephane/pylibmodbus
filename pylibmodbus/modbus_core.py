@@ -8,15 +8,10 @@ from cffi import FFI
 ffi = FFI()
 ffi.cdef("""
     typedef struct _modbus modbus_t;
-    struct timeval {
-        long int tv_sec;
-        long int tv_usec;
-    };
-
     int modbus_connect(modbus_t *ctx);
     int modbus_set_slave(modbus_t *ctx, int slave);
-    void modbus_get_response_timeout(modbus_t *ctx, struct timeval *timeout);
-    void modbus_set_response_timeout(modbus_t *ctx, struct timeval *timeout);
+    void modbus_get_response_timeout(modbus_t *ctx, uint32_t *to_sec, uint32_t *to_usec);
+    void modbus_set_response_timeout(modbus_t *ctx, uint32_t to_sec, uint32_t to_usec);
     void modbus_close(modbus_t *ctx);
     const char *modbus_strerror(int errnum);
 
@@ -67,17 +62,15 @@ class ModbusCore(object):
         return self._run(C.modbus_set_slave, slave)
 
     def get_response_timeout(self):
-        response_timeout = ffi.new('struct timeval *')
-        self._run(C.modbus_get_response_timeout, response_timeout)
-        return response_timeout.tv_sec + (response_timeout.tv_usec / 1000000)
+        sec = ffi.new("uint32_t*")
+        usec = ffi.new("uint32_t*")
+        self._run(C.modbus_get_response_timeout, sec, usec)
+        return sec[0] + (usec[0] / 1000000)
 
     def set_response_timeout(self, seconds):
-        timeval = {
-            'tv_sec': int(seconds),
-            'tv_usec': int((seconds - int(seconds)) * 1000000)
-        }
-        response_timeout = ffi.new('struct timeval *', timeval)
-        self._run(C.modbus_set_response_timeout, response_timeout)
+        sec = int(seconds)
+        usec = int((seconds - sec) * 1000000)
+        self._run(C.modbus_set_response_timeout, sec, usec)
 
     def close(self):
         C.modbus_close(self.ctx)

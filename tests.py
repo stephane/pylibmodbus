@@ -24,6 +24,7 @@ class ModbusTcpTest(unittest.TestCase):
     def test_get_set_timeout(self):
         old_response_timeout = self.mb.get_response_timeout()
         self.mb.set_response_timeout(10.5)
+
         new_response_timeout = self.mb.get_response_timeout()
         self.assertEqual(new_response_timeout, 10.5)
 

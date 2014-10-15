@@ -5,6 +5,8 @@ pylibmodbus
 Python Interface for libmodbus written with CFFI.
 This libmodbus wrapper is compatible with Python 2 and Python 3.
 
+This wrapper is only compatible with libmodbus v3.1.2 and above.
+
 Required packages:
 
 - python-dev and libffi-dev
