@@ -3,8 +3,8 @@
 # Copyright (c) 2013, Stéphane Raimbault <stephane.raimbault@gmail.com>
 
 """
-Launch the tests/bandwidth-server-many-up of libmodbus before running the
-test suite.
+Launch the tests/bandwidth-server-many-up program of libmodbus before running the
+test suite with: python -m tests
 """
 from __future__ import division
 
