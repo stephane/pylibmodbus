@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) 2013, Stéphane Raimbault <stephane.raimbault@gmail.com>
 
+from __future__ import division
+
 from cffi import FFI
 
 ffi = FFI()
@@ -67,13 +69,13 @@ class ModbusCore(object):
     def get_response_timeout(self):
         response_timeout = ffi.new('struct timeval *')
         self._run(C.modbus_get_response_timeout, response_timeout)
-        timeval = {}
-        timeval['tv_sec'] = response_timeout.tv_sec
-        timeval['tv_usec'] = response_timeout.tv_usec
-        return timeval
+        return response_timeout.tv_sec + (response_timeout.tv_usec / 1000000)
 
-    def set_response_timeout(self, sec, usec):
-        timeval = {'tv_sec': sec, 'tv_usec': usec}
+    def set_response_timeout(self, seconds):
+        timeval = {
+            'tv_sec': int(seconds),
+            'tv_usec': int((seconds - int(seconds)) * 1000000)
+        }
         response_timeout = ffi.new('struct timeval *', timeval)
         self._run(C.modbus_set_response_timeout, response_timeout)
 
