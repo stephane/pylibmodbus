@@ -23,10 +23,10 @@ class ModbusTcpTest(unittest.TestCase):
 
     def test_get_set_timeout(self):
         old_response_timeout = self.mb.get_response_timeout()
-        self.mb.set_response_timeout(10.5)
+        self.mb.set_response_timeout(old_response_timeout + 1)
 
         new_response_timeout = self.mb.get_response_timeout()
-        self.assertEqual(new_response_timeout, 10.5)
+        self.assertEqual(new_response_timeout, old_response_timeout + 1)
 
     def test_read_and_write(self):
         nb = 5
@@ -46,6 +46,12 @@ class ModbusTcpTest(unittest.TestCase):
         # Read
         read_data = self.mb.read_registers(0, nb)
         self.assertListEqual(write_data, list(read_data))
+
+    def test_write_and_read_registers(self):
+        write_data = list(range(5))
+        # Write 5 registers and read 3 from address 2
+        read_data = self.mb.write_and_read_registers(0, write_data, 2, 3)
+        self.assertListEqual(list(read_data), write_data[2:])
 
 
 class ModbusDataTest(unittest.TestCase):

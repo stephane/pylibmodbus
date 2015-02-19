@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 # Copyright (c) 2013, Stéphane Raimbault <stephane.raimbault@gmail.com>
+#
+# SPDX-License-Identifier: BSD-3-Clause
 
 from __future__ import division
 
@@ -23,11 +25,13 @@ ffi.cdef("""
     int modbus_write_register(modbus_t *ctx, int reg_addr, int value);
     int modbus_write_bits(modbus_t *ctx, int addr, int nb, const uint8_t *data);
     int modbus_write_registers(modbus_t *ctx, int addr, int nb, const uint16_t *data);
+    int modbus_write_and_read_registers(modbus_t *ctx, int write_addr, int write_nb, const uint16_t *src, int read_addr, int read_nb, uint16_t *dest);
 
     float modbus_get_float(const uint16_t *src);
     void modbus_set_float(float f, uint16_t *dest);
 
     modbus_t* modbus_new_tcp(const char *ip_address, int port);
+    modbus_t* modbus_new_rtu(const char *device, int baud, char parity, int data_bit, int stop_bit);
 """)
 C = ffi.dlopen('modbus')
 
@@ -109,5 +113,12 @@ class ModbusCore(object):
         self._run(C.modbus_write_bits, addr, nb, data)
 
     def write_registers(self, addr, data):
+        # const uint16_t*
         nb = len(data)
         self._run(C.modbus_write_registers, addr, nb, data)
+
+    def write_and_read_registers(self, write_addr, data, read_addr, read_nb):
+        # const uint16_t*
+        dest = ffi.new("uint16_t[]", read_nb)
+        self._run(C.modbus_write_and_read_registers, write_addr, len(data), data, read_addr, read_nb, dest)
+        return dest
