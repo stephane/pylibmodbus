@@ -28,7 +28,7 @@ setup(
     packages=packages,
     package_data={'': ['LICENSE']},
     include_package_data=True,
-    install_requires=['cffi>=0.6'],
+    install_requires=[],
     license=file_content('LICENSE'),
     zip_safe=False,
     classifiers=(
