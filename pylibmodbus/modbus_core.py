@@ -10,11 +10,29 @@ from cffi import FFI
 ffi = FFI()
 ffi.cdef("""
     typedef struct _modbus modbus_t;
+
+    typedef struct {
+        int nb_bits;
+        int start_bits;
+        int nb_input_bits;
+        int start_input_bits;
+        int nb_input_registers;
+        int start_input_registers;
+        int nb_registers;
+        int start_registers;
+        uint8_t *tab_bits;
+        uint8_t *tab_input_bits;
+        uint16_t *tab_input_registers;
+        uint16_t *tab_registers;
+    } modbus_mapping_t;
+
     int modbus_connect(modbus_t *ctx);
     int modbus_set_slave(modbus_t *ctx, int slave);
     void modbus_get_response_timeout(modbus_t *ctx, uint32_t *to_sec, uint32_t *to_usec);
     void modbus_set_response_timeout(modbus_t *ctx, uint32_t to_sec, uint32_t to_usec);
     void modbus_close(modbus_t *ctx);
+    void modbus_free(modbus_t *ctx);
+    int modbus_set_debug(modbus_t *ctx, int flag);
     const char *modbus_strerror(int errnum);
 
     int modbus_read_bits(modbus_t *ctx, int addr, int nb, uint8_t *dest);
@@ -32,6 +50,27 @@ ffi.cdef("""
 
     modbus_t* modbus_new_tcp(const char *ip_address, int port);
     modbus_t* modbus_new_rtu(const char *device, int baud, char parity, int data_bit, int stop_bit);
+
+    modbus_mapping_t* modbus_mapping_new_start_address(
+                unsigned int start_bits, unsigned int nb_bits,
+                unsigned int start_input_bits, unsigned int nb_input_bits,
+                unsigned int start_registers, unsigned int nb_registers,
+                unsigned int start_input_registers, unsigned int nb_input_registers);
+
+    modbus_mapping_t* modbus_mapping_new(int nb_bits, int nb_input_bits,
+                                                int nb_registers, int nb_input_registers);
+
+    void modbus_mapping_free(modbus_mapping_t *mb_mapping);
+
+    int modbus_receive(modbus_t *ctx, uint8_t *req);
+
+    int modbus_reply(modbus_t *ctx, const uint8_t *req,
+                            int req_length, modbus_mapping_t *mb_mapping);
+
+    int modbus_reply_exception(modbus_t *ctx, const uint8_t *req,
+                                      unsigned int exception_code);
+
+
 """)
 C = ffi.dlopen('modbus')
 
@@ -48,6 +87,8 @@ def cast_to_int16(data):
 def cast_to_int32(data):
     return int(ffi.cast('int32_t', data))
 
+def create_request_buffer(length=256):
+    return ffi.new("uint8_t[]", length)
 
 class ModbusException(Exception):
     pass
@@ -58,6 +99,7 @@ class ModbusCore(object):
         rc = func(self.ctx, *args)
         if rc == -1:
             raise Exception(ffi.string(C.modbus_strerror(ffi.errno)))
+        return rc
 
     def connect(self):
         return self._run(C.modbus_connect)
@@ -78,6 +120,12 @@ class ModbusCore(object):
 
     def close(self):
         C.modbus_close(self.ctx)
+
+    def free(self):
+        C.modbus_free(self.ctx)
+
+    def set_debug(self, flag):
+        self._run(C.modbus_set_debug, flag)
 
     def read_bits(self, addr, nb):
         dest = ffi.new("uint8_t[]", nb)
@@ -122,3 +170,27 @@ class ModbusCore(object):
         dest = ffi.new("uint16_t[]", read_nb)
         self._run(C.modbus_write_and_read_registers, write_addr, len(data), data, read_addr, read_nb, dest)
         return dest
+
+    def mapping_free(self, mb_mapping):
+        return C.modbus_mapping_free(mb_mapping)
+
+    def receive(self, req):
+        return self._run(C.modbus_receive, req)
+
+    def reply(self, req, req_length, mb_mapping):
+        return self._run(C.modbus_reply, req, req_length, mb_mapping)
+
+    def reply_exception(self, req, exception_code):
+        return self._run(C.modbus_reply_exception, req, exception_code)
+
+    def mapping_new_start_address(self, start_bits, nb_bits, start_input_bits, nb_input_bits, 
+            start_registers, nb_registers, start_input_registers, nb_input_registers):
+
+        return C.modbus_mapping_new_start_address( 
+            start_bits, nb_bits, 
+            start_input_bits, nb_input_bits, 
+            start_registers, nb_registers, 
+            start_input_registers, nb_input_registers )
+
+    def  mapping_new(self, nb_bits, nb_input_bits, nb_registers, nb_input_registers):
+        return C.modbus_mapping_new(nb_bits, nb_input_bits, nb_registers, nb_input_registers)
