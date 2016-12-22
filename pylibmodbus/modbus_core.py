@@ -9,6 +9,8 @@ from cffi import FFI
 
 ffi = FFI()
 ffi.cdef("""
+    #define MODBUS_MAX_PDU_LENGTH ...
+
     typedef struct _modbus modbus_t;
     int modbus_connect(modbus_t *ctx);
     int modbus_set_slave(modbus_t *ctx, int slave);
@@ -25,6 +27,7 @@ ffi.cdef("""
     int modbus_write_register(modbus_t *ctx, int reg_addr, int value);
     int modbus_write_bits(modbus_t *ctx, int addr, int nb, const uint8_t *data);
     int modbus_write_registers(modbus_t *ctx, int addr, int nb, const uint16_t *data);
+    int modbus_report_slave_id(modbus_t *ctx, int max_dest, uint8_t *dest);
     int modbus_write_and_read_registers(modbus_t *ctx, int write_addr, int write_nb, const uint16_t *src, int read_addr, int read_nb, uint16_t *dest);
 
     float modbus_get_float(const uint16_t *src);
@@ -34,7 +37,7 @@ ffi.cdef("""
     modbus_t* modbus_new_rtu(const char *device, int baud, char parity, int data_bit, int stop_bit);
 """)
 C = ffi.dlopen('modbus')
-
+lib = ffi.verify("#include <modbus.h>", libraries=['modbus'], include_dirs=['/usr/local/include/modbus'])
 
 def get_float(data):
     return C.modbus_get_float(data)
@@ -97,6 +100,11 @@ class ModbusCore(object):
     def read_input_registers(self, addr, nb):
         dest = ffi.new("uint16_t[]", nb)
         self._run(C.modbus_read_input_registers, addr, nb, dest)
+        return dest
+
+    def report_slave_id(self):
+        dest = ffi.new("uint8_t[]", lib.MODBUS_MAX_PDU_LENGTH)
+        self._run(C.modbus_report_slave_id, lib.MODBUS_REPORT_SLAVE_ID, dest)
         return dest
 
     def write_bit(self, addr, status):

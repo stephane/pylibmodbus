@@ -47,6 +47,10 @@ class ModbusTcpTest(unittest.TestCase):
         read_data = self.mb.read_registers(0, nb)
         self.assertListEqual(write_data, list(read_data))
 
+    def test_report_slave_id(self):
+        read_data = self.mb.report_slave_id()
+        self.assertEqual(read_data[0], 'L')
+
     def test_write_and_read_registers(self):
         write_data = list(range(5))
         # Write 5 registers and read 3 from address 2
