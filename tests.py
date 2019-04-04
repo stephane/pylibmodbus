@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# Copyright (c) 2013, Stéphane Raimbault <stephane.raimbault@gmail.com>
+# Copyright (c) Stéphane Raimbault <stephane.raimbault@gmail.com>
 
 """
 Launch the tests/bandwidth-server-many-up program of libmodbus before running the
