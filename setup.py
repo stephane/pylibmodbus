@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
 
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
-
 import codecs
+from setuptools import setup
 
 __version__ = '0.0.4'
 
