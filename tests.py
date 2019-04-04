@@ -13,7 +13,6 @@ import pylibmodbus
 
 
 class ModbusTcpTest(unittest.TestCase):
-
     def setUp(self):
         self.mb = pylibmodbus.ModbusTcp("127.0.0.1", 1502)
         self.mb.connect()
@@ -55,10 +54,9 @@ class ModbusTcpTest(unittest.TestCase):
 
 
 class ModbusDataTest(unittest.TestCase):
-
     def test_set_get_float(self):
         UT_REAL = 916.540649
-        data = [0x229a, 0x4465]
+        data = [0x229A, 0x4465]
         self.assertAlmostEqual(pylibmodbus.get_float(data), UT_REAL, places=6)
 
         pylibmodbus.set_float(UT_REAL, data)
@@ -78,8 +76,10 @@ class ModbusDataTest(unittest.TestCase):
         self.assertEqual(pylibmodbus.cast_to_int32(0), 0)
         self.assertEqual(pylibmodbus.cast_to_int32(MAX_UINT32), -1)
         self.assertEqual(pylibmodbus.cast_to_int32(MAX_UINT32 / 2), MAX_UINT32 // 2)
-        self.assertEqual(pylibmodbus.cast_to_int32((MAX_UINT32 / 2) + 1), -((MAX_UINT32 // 2) + 1))
+        self.assertEqual(
+            pylibmodbus.cast_to_int32((MAX_UINT32 / 2) + 1), -((MAX_UINT32 // 2) + 1)
+        )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

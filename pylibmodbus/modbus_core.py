@@ -8,7 +8,8 @@ from __future__ import division
 from cffi import FFI
 
 ffi = FFI()
-ffi.cdef("""
+ffi.cdef(
+    """
     typedef struct _modbus modbus_t;
     int modbus_connect(modbus_t *ctx);
     int modbus_set_slave(modbus_t *ctx, int slave);
@@ -32,21 +33,25 @@ ffi.cdef("""
 
     modbus_t* modbus_new_tcp(const char *ip_address, int port);
     modbus_t* modbus_new_rtu(const char *device, int baud, char parity, int data_bit, int stop_bit);
-""")
-C = ffi.dlopen('modbus')
+"""
+)
+C = ffi.dlopen("modbus")
 
 
 def get_float(data):
     return C.modbus_get_float(data)
 
+
 def set_float(value, data):
     C.modbus_set_float(value, data)
 
+
 def cast_to_int16(data):
-    return int(ffi.cast('int16_t', data))
+    return int(ffi.cast("int16_t", data))
+
 
 def cast_to_int32(data):
-    return int(ffi.cast('int32_t', data))
+    return int(ffi.cast("int32_t", data))
 
 
 class ModbusException(Exception):
@@ -120,5 +125,13 @@ class ModbusCore(object):
     def write_and_read_registers(self, write_addr, data, read_addr, read_nb):
         # const uint16_t*
         dest = ffi.new("uint16_t[]", read_nb)
-        self._run(C.modbus_write_and_read_registers, write_addr, len(data), data, read_addr, read_nb, dest)
+        self._run(
+            C.modbus_write_and_read_registers,
+            write_addr,
+            len(data),
+            data,
+            read_addr,
+            read_nb,
+            dest,
+        )
         return dest
