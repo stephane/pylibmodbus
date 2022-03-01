@@ -16,6 +16,7 @@ ffi.cdef(
     void modbus_get_response_timeout(modbus_t *ctx, uint32_t *to_sec, uint32_t *to_usec);
     void modbus_set_response_timeout(modbus_t *ctx, uint32_t to_sec, uint32_t to_usec);
     void modbus_close(modbus_t *ctx);
+    int modbus_flush(modbus_t *ctx);
     const char *modbus_strerror(int errnum);
 
     int modbus_read_bits(modbus_t *ctx, int addr, int nb, uint8_t *dest);
@@ -83,6 +84,9 @@ class ModbusCore(object):
 
     def close(self):
         C.modbus_close(self.ctx)
+        
+    def flush(self):
+        C.modbus_flush(self.ctx)
 
     def read_bits(self, addr, nb):
         dest = ffi.new("uint8_t[]", nb)
