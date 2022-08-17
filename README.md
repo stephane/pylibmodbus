@@ -19,9 +19,9 @@ You can use the server provided by libmodbus in `tests` directory:
 
 ```shell
 ./tests/bandwidth-server-many-up
-````
+```
 
-Once this server is running, you can launch the Python tests with::
+Once this server is running, you can launch the Python tests with:
 
 ```shell
 python -m tests
