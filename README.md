@@ -12,6 +12,18 @@ Required packages:
 
 Licensed under BSD 3-Clause (see LICENSE file for details).
 
+## Installation
+
+The package `pylibmodbus' is available from Pypi but you must install libmodbus
+before using is (see <https://libmodbus.org> for details).
+
+Example for Debian:
+
+```shell
+apt-get install libmodbus
+pip install pylibmodbus
+```
+
 ## Tests
 
 Before running the test suite, you need to launch a TCP server.
