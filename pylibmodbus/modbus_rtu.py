@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright (c) Stéphane Raimbault <stephane.raimbault@gmail.com>
 #
 # SPDX-License-Identifier: BSD-3-Clause

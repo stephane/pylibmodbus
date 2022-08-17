@@ -1,14 +1,12 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 # Copyright (c) Stéphane Raimbault <stephane.raimbault@gmail.com>
 
 """
-Launch the tests/bandwidth-server-many-up program of libmodbus before running the
-test suite with: python -m tests
+Launch the program `tests/bandwidth-server-many-up` from libmodbus
+before running the test suite with: python -m tests
 """
-from __future__ import division
-
 import unittest
+
 import pylibmodbus
 
 
